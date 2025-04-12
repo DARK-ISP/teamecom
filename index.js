@@ -2,6 +2,7 @@ import express from "express";
 import { connectDb } from "./dbConnect.js";
 import sellerRouter from "./seller/seller.api.js";
 import userRouter from "./user/user.api.js";
+import buyerRouter from "./buyer/buyer.api.js";
 
 const app = express();
 const port = process.env.port || 8080
@@ -16,6 +17,7 @@ app.use((err,req,res,next)=>{
 connectDb();
 app.use(userRouter);
 app.use(sellerRouter);
+app.use(buyerRouter)
 
 app.listen(port, ()=>{
     console.log(`server is running on port ${port}`)
