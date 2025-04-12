@@ -1,12 +1,7 @@
  import mongoose  from "mongoose";
-
  const username = process.env.uName 
-
  const password = process.env.password
-
  const dbName = process.env.dbname
-
- 
 
  export const connectDb = async()=>{
 

@@ -28,6 +28,12 @@ const userSchema = new mongoose.Schema({
     type:String,
     enum:["seller","buyer"],
     required:true,
-    default:["buyer"],
+    default:"buyer"
  }
+},{
+    timestamps:true
 });
+
+const User = mongoose.model("user", userSchema);
+
+export default User

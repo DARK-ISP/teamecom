@@ -28,7 +28,6 @@ export const validateUserSignupData = yup.object({
 
   role: yup
     .string()
-   
     .trim()
     .default("buyer")
     .oneOf(["buyer", "seller"], "Invalid role. choose either buyer or seller"),

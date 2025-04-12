@@ -4,6 +4,7 @@ import sellerRouter from "./seller/seller.api.js";
 import userRouter from "./user/user.api.js";
 
 const app = express();
+const port = process.env.port || 8080
 
 app.use(express.json());
 
@@ -12,16 +13,9 @@ app.use((err,req,res,next)=>{
    return res.status(500).json({message:err})
 })
 
-
 connectDb();
-
 app.use(userRouter);
-
 app.use(sellerRouter);
-
-
-
-const port = process.env.port || 8080
 
 app.listen(port, ()=>{
     console.log(`server is running on port ${port}`)
