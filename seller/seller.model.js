@@ -36,16 +36,21 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-   
-productOwnerId: {
-type: mongoose.Schema.Types.ObjectId,
-required:true
-},
+
+    productOwnerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
 
     image: {
       type: String,
     },
+    isArchived: {
+      type: Boolean,
+      default: false,
+    },
   },
+
   {
     timestamps: true,
   }
