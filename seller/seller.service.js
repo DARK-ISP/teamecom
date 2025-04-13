@@ -30,6 +30,17 @@ export const addProduct = async (req, res, next) => {
   }
 };
 
+export const listProduct = async (req, res, next) => {
+  console.log("first");
+  const payload = req.userId;
+  try {
+    const result = await Product.find({ productOwnerId: payload });
+
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
 export const editProduct = async (req, res, next) => {
   const productId = req.params.id;
   const payload = req.body;
@@ -52,10 +63,9 @@ export const productDetail = async (req, res, next) => {
   const productId = req.params.id;
   try {
     const details = await Product.findOne({ _id: productId });
-        if(details.isArchived !==false){
-            return res.status(400).json({message: "product not found"})
-        }
-
+    if (details.isArchived !== false) {
+      return res.status(400).json({ message: "product not found" });
+    }
 
     return res.status(200).json({ data: details });
   } catch (err) {
@@ -64,20 +74,20 @@ export const productDetail = async (req, res, next) => {
 };
 export const deleteProduct = async (req, res) => {
   const productId = req.params.id;
-  const payload= req.body;
+  const payload = req.body;
   try {
-  const checkProduct = await Product.findById(productId)
+    const checkProduct = await Product.findById(productId);
 
-  if(checkProduct.isArchived===true){
-    return res.status(400).json({message:"product not found"})
-  }
+    if (checkProduct.isArchived === true) {
+      return res.status(400).json({ message: "product not found" });
+    }
 
     const result = await Product.findByIdAndUpdate(
-      { _id:productId },
+      { _id: productId },
       payload,
       { new: true }
     );
-    return res.status(200).json({message: "item deleted!!"})
+    return res.status(200).json({ message: "item deleted!!" });
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }

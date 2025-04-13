@@ -1,6 +1,6 @@
 import express from "express"
 import { isSeller } from "../authentication/user.authentication.js";
-import { addProduct, addProductValidation, deleteProduct, editProduct, productDetail,  } from "./seller.service.js";
+import { addProduct, addProductValidation, deleteProduct, editProduct, listProduct, productDetail,  } from "./seller.service.js";
 import { isOwner } from "../middleware/check.ownership.js";
 import { checkMongoIdValidity } from "../utils/mongo.id.validity.js";
 
@@ -12,6 +12,8 @@ router.post("/product/add",isSeller,addProductValidation,addProduct)
 
 
 router.put("/product/edit/:id",isSeller,checkMongoIdValidity,isOwner,editProduct)
+
+router.get("/product/list",isSeller,listProduct)
 
 router.get("/product/details/:id",isSeller,checkMongoIdValidity,isOwner,productDetail)
 
