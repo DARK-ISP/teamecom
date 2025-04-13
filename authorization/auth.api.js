@@ -1,5 +1,5 @@
 import express from "express";
-import { optGenerator, otpCode, otpValidateEmail } from "./auth.service.js";
+import { optGenerator, otpCode, otpValidateEmail, regenerateOtp } from "./auth.service.js";
 
 const router = express();
 
@@ -12,6 +12,9 @@ router.post("/forget/otp",otpValidateEmail,optGenerator);
 //login api with verify code 
 
 router.post("/login/otp",otpCode)
+
+//resend api 
+router.post("/otp/resend",regenerateOtp)
 
 
 
