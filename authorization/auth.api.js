@@ -1,10 +1,17 @@
 import express from "express";
-import { optGenerator } from "./auth.service.js";
+import { optGenerator, otpCode, otpValidateEmail } from "./auth.service.js";
 
 const router = express();
 
 router.use(express.Router())
-router.post("/forget/otp",optGenerator)
+
+//forget password api
+router.post("/forget/otp",otpValidateEmail,optGenerator);
+
+
+//login api with verify code 
+
+router.post("/login/otp",otpCode)
 
 
 

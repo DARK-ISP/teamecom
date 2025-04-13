@@ -1,6 +1,6 @@
 import {totp} from "otplib";
 
-totp.options= {digits:6, step:90};
+totp.options= {digits:6, step:120};
 
 export const generateOTP = ()=>{
  
