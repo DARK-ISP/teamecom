@@ -69,7 +69,7 @@ if(user.roles !=="buyer")
 }
 
 req.userData  = user;
-req.userId = user._id;
+req.userId = user._id; 
 
 next();
 }
