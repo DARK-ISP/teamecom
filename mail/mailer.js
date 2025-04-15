@@ -25,5 +25,5 @@ const transporter = nodemailer.createTransport({
     console.log("Message sent: %s", info.messageId);
     // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
   }
-  
+   
   
