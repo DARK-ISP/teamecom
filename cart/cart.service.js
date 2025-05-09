@@ -148,7 +148,7 @@ export const cartList = async (req, res) => {
     [
       {
         $match: {
-          buyerId: "67fe01883ee20d2baee72873",
+          buyerId: req.userId,
         },
       },
       {
