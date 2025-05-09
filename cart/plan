@@ -1,0 +1,31 @@
+cart
+
+user product id 
+user quantity ,action 
+
+user product id search to cart database 
+
+if  product id = true 
+cart update
+update past quantity + new quantity //inc //dec
+
+product.quantity update //dec //inc
+
+
+
+
+
+if product id = false 
+
+create cart 
+
+
+
+cart fluch 
+
+if product deleted - cart deleted
+
+
+
+
+
