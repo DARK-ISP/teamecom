@@ -14,7 +14,7 @@ const router = express();
 
 router.use(express.Router());
 
-//create order
+//create order 
 router.post("/product/order", isBuyer, validateOrder, createOrder);
 
 //update product
@@ -27,4 +27,4 @@ router.get("/product/order/:id", isBuyer, orderById);
 router.delete("/product/order/:id", isBuyer, deleteById);
 //order list of specific buyer
 
-export default router;
+export default router; 
