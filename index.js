@@ -7,15 +7,37 @@ import otpRouter from "./authorization/auth.api.js";
 import cartRouter from"./cart/cart.api.js";
 import orderRouter from "./order/order.api.js";
 import reviewRouter from "./review/review.api.js";
+// memory storage by default
+
+
+
+
 const app = express();
 const port = process.env.port || 8080
 
-app.use(express.json());
-
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
+app.use(express.static("public"))
 app.use((err,req,res,next)=>{
     err= err? err.toString():"something went wrong...";
    return res.status(500).json({message:err})
 })
+
+
+
+
+
+app.post("/data", (req, res) => {
+  const data = req.body;
+  console.log(data);
+  res.status(200).json({ message: "Data received successfully" });
+}
+);
+
+
+
+
+
 
 connectDb();
 app.use(userRouter);

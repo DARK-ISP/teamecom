@@ -1,6 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
 import { Product } from "../seller/seller.model.js";
 import Order from "./order.model.js";
+import Stripe from "stripe";
+import { response } from "express";
+
+const stripe=new Stripe(process.env.SECRET_KEY)
 
 export const validateOrder = async (req, res, next) => {
   next();
@@ -9,7 +13,6 @@ export const validateOrder = async (req, res, next) => {
 export const createOrder = async (req, res, next) => {
   try {
     const orderData = req.body;
-    console.log(req.userId);
     orderData.buyerId = req.userId;
     orderData.id = uuidv4();
     const products = orderData?.products;
@@ -115,6 +118,37 @@ export const orderList = async (req, res) => {
 };
 
 
+//payment 
+
+
+export const checkoutPayment= async (req, res) => {
+  const product=req.body;
+  const response = await stripe.checkout.sessions.create({
+
+    line_items:[
+      {
+        price_data:{
+          currency:"usd",
+          product_data:{
+            name:product.name
+          },
+          unit_amount: product.price *100
+        },
+        quantity:product.quantity
+      }
+    ],
+    mode:"payment",
+    success_url:`${process.env.SERVER_URL}/success.html`,
+    cancel_url:`${process.env.SERVER_URL}/cancel.html`
+  })
+  console.log(response)
+}
+ 
+// if(!response) {
+//   return res.status(400).json({message:"payment request Failed!!"})
+// }
+
+// return res.status(200).json({data:{session_id:response.id,session_url:response.url}},{message:"Success"})
 
 
 

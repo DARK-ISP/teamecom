@@ -1,8 +1,11 @@
 import { Product } from "./seller.model.js";
 import { validateProduct } from "./seller.validation.js";
+
 //add product validation function
 export const addProductValidation = async (req, res, next) => {
   const productData = req.body;
+
+console.log(productData);
 
   try {
     await validateProduct.validate(productData);
@@ -13,12 +16,32 @@ export const addProductValidation = async (req, res, next) => {
   next();
 };
 
+
 //add production function
+
+
+
+
+
+
+
+
 export const addProduct = async (req, res, next) => {
   const productData = req.body;
-  try {
-    const productOwnerId = req.userId;
+   try {
+  if(req.files){
+   productData.images=[];
 
+      req.files.map((file)=>{
+           productData.images.push("public/images/".concat(file.filename))
+
+      }
+      )
+    
+  }
+   
+    const productOwnerId = req.userId;
+  console.log(productOwnerId)
     const addProduct = { ...productData, productOwnerId };
 
     const result = await Product.create(addProduct);

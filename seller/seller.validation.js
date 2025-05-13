@@ -39,7 +39,7 @@ export const validateProduct = yup.object({
   quantity: yup
 
     .number()
-    .required("quentity is required !!")
+    .required("quantity is required !!")
     .positive("qualtity must be a positive number !! ")
     .typeError("quantity must be a number!!"),
   image: yup.string(),
