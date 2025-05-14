@@ -5,7 +5,7 @@ import { validateProduct } from "./seller.validation.js";
 export const addProductValidation = async (req, res, next) => {
   const productData = req.body;
 
-console.log(productData);
+  productData;
 
   try {
     await validateProduct.validate(productData);
@@ -16,32 +16,21 @@ console.log(productData);
   next();
 };
 
-
 //add production function
-
-
-
-
-
-
-
 
 export const addProduct = async (req, res, next) => {
   const productData = req.body;
-   try {
-  if(req.files){
-   productData.images=[];
+  try {
+    if (req.files) {
+      productData.images = [];
 
-      req.files.map((file)=>{
-           productData.images.push("public/images/".concat(file.filename))
+      req.files.map((file) => {
+        productData.images.push("public/images/".concat(file.filename));
+      });
+    }
 
-      }
-      )
-    
-  }
-   
     const productOwnerId = req.userId;
-  console.log(productOwnerId)
+    productOwnerId;
     const addProduct = { ...productData, productOwnerId };
 
     const result = await Product.create(addProduct);
@@ -58,23 +47,39 @@ export const listProduct = async (req, res, next) => {
   try {
     const result = await Product.find({ productOwnerId: payload });
 
-    return res.status(200).json({ data: result });
+    
+
+
+
+
+
+
+    // return res.status(200).json({ data: result });
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
 };
 export const editProduct = async (req, res, next) => {
   const productId = req.params.id;
-  const payload = req.body;
+  const productData = req.body;
+  if (req.files) {
+    productData.images = [];
+
+    req.files.map((file) => {
+      productData.images.push("public/images/".concat(file.filename));
+    });
+  }
 
   try {
-    const productData = await Product.findOneAndUpdate(
+    productData;
+    const productResult = await Product.findOneAndUpdate(
       { _id: productId },
-      payload,
+      { ...productData },
       { new: true }
     );
+
     //  await Product.updateOne({_id:productId},{$set:{...payload}})
-    if (productData) {
+    if (productResult) {
       return res.status(200).json({ message: "Product update successfully!!" });
     }
   } catch (err) {
@@ -109,7 +114,7 @@ export const deleteProduct = async (req, res) => {
       payload,
       { new: true }
     );
-    return res.status(200).json({ data:result,message: "item deleted!!" });
+    return res.status(200).json({ data: result, message: "item deleted!!" });
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }
