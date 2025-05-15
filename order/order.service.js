@@ -27,7 +27,6 @@ export const createOrder = async (req, res, next) => {
         { $set: { quantity: result?.quantity - quantity } }
       );
     });
-    console.log(orderData);
     await Order.create(orderData);
     return res.status(200).json({ data: orderData });
   } catch (error) {
@@ -107,15 +106,69 @@ export const deleteById = async (req, res) => {
 };
 
 export const orderList = async (req, res) => {
-  const id = req.userId;
-  const result = await Order.find({ buyerId: id });
 
-  if (result) {
-    return res.status(200).json({ data: result });
-  } else {
-    return res.status(200).json("something went worng");
+  try{
+   const payload = req.userId;
+
+    let { limit = 10, page = 1, search = ''} = req.query;
+
+    limit = parseInt(limit);
+    page = parseInt(page);
+    const skip = (page - 1) * limit;
+
+    const matchStage = {
+      productOwnerId: payload
+    };
+
+    // Handle isArchived filter
+    if (typeof isArchived !== 'undefined') {
+      matchStage.isArchived = isArchived === 'true';
+    }
+
+    const query = [
+      { $match: matchStage },
+      { $sort: { createdAt: -1 } },
+      {
+        $facet: {
+          metaData: [{ $count: 'total' }],
+          data: [{ $skip: skip }, { $limit: limit }],
+          categorySummary: [
+            {
+              $group: {
+                _id: '$category',
+                count: { $sum: 1 }
+              }
+            }
+          ]
+        }
+      },
+      { $project: { data: 1, metaData: 1 } },
+      {
+        $addFields: {
+          total: {
+            $arrayElemAt: ['$metaData.total', 0]
+          }
+        }
+      },
+      {
+        $project: {
+          'data.productOwnerId': 0,
+          'data.isArchived': 0,
+          metaData: 0
+        }
+      }
+    ];
+
+    const response = await Product.aggregate(query, {
+      maxTimeMS: 60000,
+      allowDiskUse: true
+    });
+
+    return res.status(200).json({ data: response[0] || {} });
+  } catch (err) {
+    return res.status(400).json({message: err.message});
   }
-};
+}
 
 
 //payment 

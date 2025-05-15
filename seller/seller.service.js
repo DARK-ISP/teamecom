@@ -43,62 +43,131 @@ export const addProduct = async (req, res, next) => {
 };
 
 export const listProduct = async (req, res, next) => {
-  const payload = req.userId;
-  const {limit,page,search,isArchived}=req.query;
-  const query=[];
-    const result = await Product.find({ productOwnerId: payload });
+//   try { const payload = req.userId;
+//   const {limit,page,search,isArchived}=req.query;
+//   const query=[];
+//     const result = await Product.find({ productOwnerId: payload });
 
-    if(search){
-     query.push( {
-        $match:{ 
-          productName: new RegExp(search,"i")
-        }
-      })
-    }
+//     if(search){
+//      query.push( {
+//         $match:{ 
+//           productName: new RegExp(search,"i")
+//         }
+//       })
+//     }
    
- query.push(
-    { $match: { isArchived: isArchived } },
-    { $sort: { createdAt: -1 } },
-    {
-      $facet: {
-        metaData: [{ $count: 'total' }],
-        data: [{ $skip: (page-1)*limit}, { $limit: limit }],
-        categorySummary: [
-          {
-            $group: {
-              _id: '$category',
-              count: { $sum: 1 }
+//  query.push(
+//     { $match: { isArchived: isArchived } },
+//     { $sort: { createdAt: -1 } },
+//     {
+//       $facet: {
+//         metaData: [{ $count: 'total' }],
+//         data: [{ $skip: (page-1)*limit}, { $limit: limit }],
+//         categorySummary: [
+//           {
+//             $group: {
+//               _id: '$category',
+//               count: { $sum: 1 }
+//             }
+//           }
+//         ]
+//       }
+//     },
+//     { $project: { data: 1, metaData: 1 } },
+//     {
+//       $addFields: {
+//         total: {
+//           $arrayElemAt: ['$metaData.total', 0]
+//         }
+//       }
+//     },
+//     {
+//       $project: {
+//         'data.productOwnerId': 0,
+//         'data.isArchived': 0,
+//         metaData: 0
+//       }
+//     }
+//   )
+
+
+//   const response= await Product.aggregate(query,
+//   { maxTimeMS: 60000, allowDiskUse: true })
+//   }
+//   catch(err){
+//     return res.status(400).json({message:"something went wrong!!"})
+//   }
+
+
+  try {
+    const payload = req.userId;
+    let { limit = 10, page = 1, search = '', isArchived } = req.query;
+
+    limit = parseInt(limit);
+    page = parseInt(page);
+    const skip = (page - 1) * limit;
+
+    const matchStage = {
+      productOwnerId: payload
+    };
+
+    // Handle isArchived filter
+    if (typeof isArchived !== 'undefined') {
+      matchStage.isArchived = isArchived === 'true';
+    }
+
+     // Handle search
+    if (search) {
+      matchStage.productName = { $regex: search, $options: 'i' };
+    }
+
+    const query = [
+      { $match: matchStage },
+      { $sort: { createdAt: -1 } },
+      {
+        $facet: {
+          metaData: [{ $count: 'total' }],
+          data: [{ $skip: skip }, { $limit: limit }],
+          categorySummary: [
+            {
+              $group: {
+                _id: '$category',
+                count: { $sum: 1 }
+              }
             }
+          ]
+        }
+      },
+      { $project: { data: 1, metaData: 1 } },
+      {
+        $addFields: {
+          total: {
+            $arrayElemAt: ['$metaData.total', 0]
           }
-        ]
-      }
-    },
-    { $project: { data: 1, metaData: 1 } },
-    {
-      $addFields: {
-        total: {
-          $arrayElemAt: ['$metaData.total', 0]
+        }
+      },
+      {
+        $project: {
+          'data.productOwnerId': 0,
+          'data.isArchived': 0,
+          metaData: 0
         }
       }
-    },
-    {
-      $project: {
-        'data.productOwnerId': 0,
-        'data.isArchived': 0,
-        metaData: 0
-      }
-    }
-  )
+    ];
 
+    const response = await Product.aggregate(query, {
+      maxTimeMS: 60000,
+      allowDiskUse: true
+    });
 
-  const response= await Product.aggregate(query,
-  { maxTimeMS: 60000, allowDiskUse: true })
-  
+    return res.status(200).json({ data: response[0] || {} });
+  } catch (err) {
+    return res.status(400).json({message: err.message});
+  }
 
 
 
-
-     return res.status(200).json({ data: response });
+   //  return res.status(200).json({ data: response });
 
 };
 export const editProduct = async (req, res, next) => {
